@@ -69,7 +69,6 @@
             width: 85%;
         }
 
-        /* BUTTON CONTAINER */
         .banner-buttons {
             display: flex;
             gap: 15px;
@@ -120,9 +119,21 @@
         const acceptBtn = document.getElementById('accept-btn');
         const rejectBtn = document.getElementById('reject-btn');
 
-        // Show banner if no choice has been made yet
+        // Logic to show banner
         if (!localStorage.getItem('study_consent_given')) {
             overlay.style.display = 'flex';
         }
 
-        // Handle
+        acceptBtn.onclick = function() {
+            document.cookie = "ExperimentID=SiteA_Accepted; path=/; SameSite=Lax; Secure";
+            localStorage.setItem('study_consent_given', 'accepted');
+            overlay.style.display = 'none';
+        };
+
+        rejectBtn.onclick = function() {
+            localStorage.setItem('study_consent_given', 'rejected');
+            overlay.style.display = 'none';
+        };
+    </script>
+</body>
+</html>
