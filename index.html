@@ -126,61 +126,62 @@
             </div>
         </div>
     </div>
+<script>
+    const overlay = document.getElementById('cookie-overlay');
+    const acceptBtn = document.getElementById('accept-btn');
+    const rejectBtn = document.getElementById('reject-btn');
+    const surveyBtn = document.querySelector('.form-button');
 
-    <script>
-        const overlay = document.getElementById('cookie-overlay');
-        const acceptBtn = document.getElementById('accept-btn');
-        const rejectBtn = document.getElementById('reject-btn');
+    // Generate a unique Session ID for this specific visit
+    const session_id = "SID-" + Math.random().toString(36).substring(2, 10).toUpperCase();
 
-        // Logic: Show banner only if no choice is saved in this browser
-        if (!localStorage.getItem('consent_site_a')) {
-            overlay.style.display = 'flex';
-        }
+    // Show banner only if no choice is saved
+    if (!localStorage.getItem('consent_site_a')) {
+        overlay.style.display = 'flex';
+    }
 
-        // Logic for "Accept" Click
-        acceptBtn.onclick = function() {
-            // 1. Create a cookie (This is what you will audit in your HAR files)
-            document.cookie = "ExperimentID=SiteA_Accepted; path=/; SameSite=Lax; Secure";
-            document.cookie = "sessiontoken=" + Math.random().toString(36).substring(2) + "; max-age=86400; path=/";
-            
-            // 2. Remember choice so banner doesn't show again
-            localStorage.setItem('consent_site_a', 'accepted');
-            
-            // 3. Hide banner
-            overlay.style.display = 'none';
+    // --- TRIGGER 1: ACCEPT CONSENT ---
+    acceptBtn.onclick = function() {
+        document.cookie = "ExperimentID=SiteA_Accepted; path=/; SameSite=Lax; Secure";
+        document.cookie = "sessiontoken=" + session_id + "; max-age=86400; path=/";
+        
+        localStorage.setItem('consent_site_a', 'accepted');
+        overlay.style.display = 'none';
 
-            // 4. Send Event to Google Analytics
-            gtag('event', 'consent_accepted', { 'method': 'banner_click' });
+        // Log to GA with the Session ID parameter
+        gtag('event', 'consent_selection', { 
+            'event_label': 'Accepted',
+            'custom_session_id': session_id,
+            'method': 'banner_click' 
+        });
+    };
 
-            // Logic for "Decline" Click
-        rejectBtn.onclick = function() {
-            // 
-            document.cookie = "ExperimentID=SiteA_Declined; path=/; SameSite=Lax; Secure";
-            document.cookie = "sessiontoken=" + Math.random().toString(36).substring(2) + "; max-age=86400; path=/";
-            // --------------------------------
+    // --- TRIGGER 2: DECLINE CONSENT ---
+    rejectBtn.onclick = function() {
+        document.cookie = "ExperimentID=SiteA_Declined; path=/; SameSite=Lax; Secure";
+        document.cookie = "sessiontoken=" + session_id + "; max-age=86400; path=/";
 
-            // 1. Remember choice (without setting a cookie)
-            localStorage.setItem('consent_site_a', 'rejected');
-    
-            // 2. Hide banner
-            overlay.style.display = 'none';
+        localStorage.setItem('consent_site_a', 'rejected');
+        overlay.style.display = 'none';
 
-            // 3. Send Event to Google Analytics
-            gtag('event', 'consent_rejected', { 'method': 'banner_click' });
-};
-        };
+        // Log to GA with the Session ID parameter
+        gtag('event', 'consent_selection', { 
+            'event_label': 'Declined',
+            'custom_session_id': session_id,
+            'method': 'banner_click' 
+        });
+    };
 
-        // Logic for "Decline" Click
-       // rejectBtn.onclick = function() {
-            // 1. Remember choice (without setting a cookie)
-            //localStorage.setItem('consent_site_a', 'rejected');
-            
-            // 2. Hide banner
-            //overlay.style.display = 'none';
+    // --- TRIGGER 3: CONVERSION (Survey Click) ---
+    surveyBtn.onclick = function() {
+        gtag('event', 'conversion_survey_start', {
+            'event_category': 'Engagement',
+            'custom_session_id': session_id,
+            'destination_url': 'Google_Form'
+        });
+    };
+</script>
+   
 
-            // 3. Send Event to Google Analytics
-            //gtag('event', 'consent_rejected', { 'method': 'banner_click' });
-        };
-    </script>
 </body>
 </html>
