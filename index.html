@@ -141,6 +141,7 @@
         acceptBtn.onclick = function() {
             // 1. Create a cookie (This is what you will audit in your HAR files)
             document.cookie = "ExperimentID=SiteA_Accepted; path=/; SameSite=Lax; Secure";
+            document.cookie = "sessiontoken=" + Math.random().toString(36).substring(2) + "; max-age=86400; path=/";
             
             // 2. Remember choice so banner doesn't show again
             localStorage.setItem('consent_site_a', 'accepted');
