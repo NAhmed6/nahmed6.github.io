@@ -149,7 +149,7 @@
         overlay.style.display = 'none';
 
         // Log to GA with the Session ID parameter
-        gtag('event', 'consent_selection', { 
+        gtag('event', 'SiteA_Consent_Accepted', { 
             'event_label': 'SiteA_Accepted',
             'custom_session_id': session_id,
             'method': 'banner_click' 
@@ -165,7 +165,7 @@
         overlay.style.display = 'none';
 
         // Log to GA with the Session ID parameter
-        gtag('event', 'consent_selection', { 
+        gtag('event', 'SiteA_Consent_Declined', { 
             'event_label': 'SiteA_Declined',
             'custom_session_id': session_id,
             'method': 'banner_click' 
