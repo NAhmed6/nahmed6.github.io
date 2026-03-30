@@ -126,13 +126,17 @@
             </div>
         </div>
     </div>
-<script>
+
+        });
+    };
+
+  <script>
     const overlay = document.getElementById('cookie-overlay');
     const acceptBtn = document.getElementById('accept-btn');
     const rejectBtn = document.getElementById('reject-btn');
     const surveyBtn = document.querySelector('.form-button');
 
-    // Generate a unique Session ID for this specific visit
+    // Generate a unique Session ID for the audit
     const session_id = "SID-" + Math.random().toString(36).substring(2, 10).toUpperCase();
 
     // Show banner only if no choice is saved
@@ -140,7 +144,7 @@
         overlay.style.display = 'flex';
     }
 
-    // --- TRIGGER 1: ACCEPT CONSENT ---
+    // --- TRIGGER 1: ACCEPT ---
     acceptBtn.onclick = function() {
         document.cookie = "ExperimentID=SiteA_Accepted; path=/; SameSite=Lax; Secure";
         document.cookie = "sessiontoken=" + session_id + "; max-age=86400; path=/";
@@ -148,15 +152,14 @@
         localStorage.setItem('consent_site_a', 'accepted');
         overlay.style.display = 'none';
 
-        // Log to GA with the Session ID parameter
+        // Direct event name for better visibility in GA4
         gtag('event', 'SiteA_Consent_Accepted', { 
-            'event_label': 'SiteA_Accepted',
             'custom_session_id': session_id,
             'method': 'banner_click' 
         });
     };
 
-    // --- TRIGGER 2: DECLINE CONSENT ---
+    // --- TRIGGER 2: DECLINE ---
     rejectBtn.onclick = function() {
         document.cookie = "ExperimentID=SiteA_Declined; path=/; SameSite=Lax; Secure";
         document.cookie = "sessiontoken=" + session_id + "; max-age=86400; path=/";
@@ -164,20 +167,17 @@
         localStorage.setItem('consent_site_a', 'rejected');
         overlay.style.display = 'none';
 
-        // Log to GA with the Session ID parameter
+        // Direct event name for better visibility in GA4
         gtag('event', 'SiteA_Consent_Declined', { 
-            'event_label': 'SiteA_Declined',
             'custom_session_id': session_id,
             'method': 'banner_click' 
         });
     };
 
-    // --- TRIGGER 3: CONVERSION (Survey Click) ---
+    // --- TRIGGER 3: CONVERSION ---
     surveyBtn.onclick = function() {
-        gtag('event', 'conversion_survey_start', {
-            'event_category': 'Engagement',
-            'custom_session_id': session_id,
-            'destination_url': 'Google_Form'
+        gtag('event', 'SiteA_Survey_Start', {
+            'custom_session_id': session_id
         });
     };
 </script>
