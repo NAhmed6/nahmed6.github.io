@@ -1,187 +1,55 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <script async src="https://www.googletagmanager.com/gtag.js?id=G-RVX7HNNXD5"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
+<script>
+        const overlay = document.getElementById('cookie-overlay');
+        const acceptBtn = document.getElementById('accept-btn');
+        const rejectBtn = document.getElementById('reject-btn');
+        const surveyBtn = document.querySelector('.form-button');
 
-      gtag('config', 'G-RVX7HNNXD5'); 
+        // Generate a unique Session ID for the audit
+        const session_id = "SID-" + Math.random().toString(36).substring(2, 10).toUpperCase();
+
+        // Show banner only if no choice is saved
+        if (!localStorage.getItem('consent_site_a')) {
+            overlay.style.display = 'flex';
+        }
+
+        // --- TRIGGER 1: ACCEPT ---
+        acceptBtn.onclick = function() {
+            document.cookie = "ExperimentID=SiteA_Accepted; path=/; SameSite=Lax; Secure";
+            document.cookie = "sessiontoken=" + session_id + "; max-age=86400; path=/";
+            
+            localStorage.setItem('consent_site_a', 'accepted');
+            overlay.style.display = 'none';
+
+            gtag('event', 'SiteA_Consent_Accepted', { 
+                'custom_session_id': session_id,
+                'method': 'banner_click' 
+            });
+        };
+
+        // --- TRIGGER 2: DECLINE ---
+        rejectBtn.onclick = function() {
+            document.cookie = "ExperimentID=SiteA_Declined; path=/; SameSite=Lax; Secure";
+            document.cookie = "sessiontoken=" + session_id + "; max-age=86400; path=/";
+
+            localStorage.setItem('consent_site_a', 'rejected');
+            overlay.style.display = 'none';
+
+            gtag('event', 'SiteA_Consent_Declined', { 
+                'custom_session_id': session_id,
+                'method': 'banner_click' 
+            });
+        };
+
+        // --- TRIGGER 3: CONVERSION (With Double-Click Protection) ---
+        let surveyClicked = false;
+        surveyBtn.onclick = function() {
+            if (surveyClicked) return; 
+            surveyClicked = true;
+
+            gtag('event', 'SiteA_Survey_Start', {
+                'custom_session_id': session_id
+            });
+        };
     </script>
-
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Networking Research Study - Site A</title>
-    
-    <style>
-        /* General Page Styling */
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background-color: #f4f4f9; 
-            display: flex; 
-            flex-direction: column;
-            align-items: center; 
-            justify-content: center; 
-            height: 100vh; 
-            margin: 0; 
-        }
-
-        /* Main Content Card */
-        .card { 
-            background: white; 
-            padding: 2.5rem; 
-            border-radius: 12px; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1); 
-            text-align: center; 
-            max-width: 450px; 
-        }
-
-        h1 { color: #252e39; margin-bottom: 20px; }
-        
-        /* Survey Button Styling */
-        .form-button { 
-            display: inline-block;
-            background-color: #8e44ad; 
-            color: white; 
-            padding: 15px 30px; 
-            text-decoration: none; 
-            border-radius: 8px; 
-            font-weight: bold; 
-            font-size: 1.1rem; 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
-            transition: transform 0.2s; 
-            margin-top: 10px;
-        }
-
-        .form-button:hover { transform: scale(1.05); background-color: #732d91; }
-
-        /* MODAL OVERLAY (The "Hard Gate" for Consent) */
-        #cookie-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.85); /* Dark background to focus on banner */
-            display: none; 
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-        }
-
-        /* The Consent Banner UI */
-        #cookie-banner { 
-            background: #252e39; 
-            color: white; 
-            padding: 30px; 
-            border-radius: 12px; 
-            box-shadow: 0 15px 35px rgba(0,0,0,0.4); 
-            text-align: center; 
-            max-width: 400px;
-            width: 85%;
-        }
-
-        .banner-buttons {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            margin-top: 25px;
-        }
-
-        .btn {
-            padding: 12px 30px; 
-            border-radius: 6px; 
-            cursor: pointer; 
-            font-weight: bold; 
-            font-size: 1rem;
-            border: none;
-            transition: opacity 0.2s;
-        }
-
-        #accept-btn { background: #8e44ad; color: white; }
-        #reject-btn { background: #5a6268; color: white; }
-
-        .btn:hover { opacity: 0.9; }
-    </style>
-</head>
-<body>
-
-    <div class="card">
-        <h1>Networking Project - Site A</h1>
-        <p>Thank you for participating in our academic study on web privacy.</p>
-        
-        <a href="https://forms.gle/12mcW67qt93uttvQ9" class="form-button">
-            Start Experiment & Survey
-        </a>
-    </div>
-
-    <div id="cookie-overlay">
-        <div id="cookie-banner">
-            <h2>Cookie Consent</h2>
-            <p>This site uses cookies for our academic privacy study. Do you agree to the storage of cookies on your device?</p>
-            <div class="banner-buttons">
-                <button id="accept-btn" class="btn">Accept</button>
-                <button id="reject-btn" class="btn">Decline</button>
-            </div>
-        </div>
-    </div>
-
-        });
-    };
-
-  <script>
-    const overlay = document.getElementById('cookie-overlay');
-    const acceptBtn = document.getElementById('accept-btn');
-    const rejectBtn = document.getElementById('reject-btn');
-    const surveyBtn = document.querySelector('.form-button');
-
-    // Generate a unique Session ID for the audit
-    const session_id = "SID-" + Math.random().toString(36).substring(2, 10).toUpperCase();
-
-    // Show banner only if no choice is saved
-    if (!localStorage.getItem('consent_site_a')) {
-        overlay.style.display = 'flex';
-    }
-
-    // --- TRIGGER 1: ACCEPT ---
-    acceptBtn.onclick = function() {
-        document.cookie = "ExperimentID=SiteA_Accepted; path=/; SameSite=Lax; Secure";
-        document.cookie = "sessiontoken=" + session_id + "; max-age=86400; path=/";
-        
-        localStorage.setItem('consent_site_a', 'accepted');
-        overlay.style.display = 'none';
-
-        // Direct event name for better visibility in GA4
-        gtag('event', 'SiteA_Consent_Accepted', { 
-            'custom_session_id': session_id,
-            'method': 'banner_click' 
-        });
-    };
-
-    // --- TRIGGER 2: DECLINE ---
-    rejectBtn.onclick = function() {
-        document.cookie = "ExperimentID=SiteA_Declined; path=/; SameSite=Lax; Secure";
-        document.cookie = "sessiontoken=" + session_id + "; max-age=86400; path=/";
-
-        localStorage.setItem('consent_site_a', 'rejected');
-        overlay.style.display = 'none';
-
-        // Direct event name for better visibility in GA4
-        gtag('event', 'SiteA_Consent_Declined', { 
-            'custom_session_id': session_id,
-            'method': 'banner_click' 
-        });
-    };
-
-    // --- TRIGGER 3: CONVERSION ---
-    surveyBtn.onclick = function() {
-        gtag('event', 'SiteA_Survey_Start', {
-            'custom_session_id': session_id
-        });
-    };
-</script>
-   
-
 </body>
 </html>
