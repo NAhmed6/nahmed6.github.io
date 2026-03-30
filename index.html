@@ -151,18 +151,35 @@
 
             // 4. Send Event to Google Analytics
             gtag('event', 'consent_accepted', { 'method': 'banner_click' });
-        };
 
-        // Logic for "Decline" Click
+            // Logic for "Decline" Click
         rejectBtn.onclick = function() {
+            // 
+            document.cookie = "ExperimentID=SiteA_Declined; path=/; SameSite=Lax; Secure";
+            document.cookie = "sessiontoken=" + Math.random().toString(36).substring(2) + "; max-age=86400; path=/";
+            // --------------------------------
+
             // 1. Remember choice (without setting a cookie)
             localStorage.setItem('consent_site_a', 'rejected');
-            
+    
             // 2. Hide banner
             overlay.style.display = 'none';
 
             // 3. Send Event to Google Analytics
             gtag('event', 'consent_rejected', { 'method': 'banner_click' });
+};
+        };
+
+        // Logic for "Decline" Click
+       // rejectBtn.onclick = function() {
+            // 1. Remember choice (without setting a cookie)
+            //localStorage.setItem('consent_site_a', 'rejected');
+            
+            // 2. Hide banner
+            //overlay.style.display = 'none';
+
+            // 3. Send Event to Google Analytics
+            //gtag('event', 'consent_rejected', { 'method': 'banner_click' });
         };
     </script>
 </body>
