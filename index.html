@@ -1,21 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script async src="https://www.googletagmanager.com/gtag.js?id=G-RVX7HNNXD5"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'G-RVX7HNNXD5'); 
-    </script>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Networking Research Study - Site A</title>
-    
+
     <style>
-        /* General Page Styling */
         body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
             background-color: #f4f4f9; 
@@ -27,7 +17,6 @@
             margin: 0; 
         }
 
-        /* Main Content Card */
         .card { 
             background: white; 
             padding: 2.5rem; 
@@ -38,8 +27,7 @@
         }
 
         h1 { color: #252e39; margin-bottom: 20px; }
-        
-        /* Survey Button Styling */
+
         .form-button { 
             display: inline-block;
             background-color: #8e44ad; 
@@ -56,21 +44,19 @@
 
         .form-button:hover { transform: scale(1.05); background-color: #732d91; }
 
-        /* MODAL OVERLAY (The "Hard Gate" for Consent) */
         #cookie-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.85); /* Dark background to focus on banner */
+            background: rgba(0, 0, 0, 0.85);
             display: none; 
             justify-content: center;
             align-items: center;
             z-index: 9999;
         }
 
-        /* The Consent Banner UI */
         #cookie-banner { 
             background: #252e39; 
             color: white; 
@@ -96,7 +82,6 @@
             font-weight: bold; 
             font-size: 1rem;
             border: none;
-            transition: opacity 0.2s;
         }
 
         #accept-btn { background: #8e44ad; color: white; }
@@ -105,92 +90,97 @@
         .btn:hover { opacity: 0.9; }
     </style>
 </head>
+
 <body>
 
-    <div class="card">
-        <h1>Networking Project - Site A</h1>
-        <p>Thank you for participating in our academic study on web privacy.</p>
-        
-        <a href="https://forms.gle/12mcW67qt93uttvQ9" class="form-button">
-            Start Experiment & Survey
-        </a>
-    </div>
+<div class="card">
+    <h1>Networking Project - Site A</h1>
+    <p>Thank you for participating in our academic study on web privacy.</p>
+    
+    <a href="https://forms.gle/12mcW67qt93uttvQ9" class="form-button">
+        Start Experiment & Survey
+    </a>
+</div>
 
-    <div id="cookie-overlay">
-        <div id="cookie-banner">
-            <h2>Cookie Consent</h2>
-            <p>This site uses cookies for our academic privacy study. Do you agree to the storage of cookies on your device?</p>
-            <div class="banner-buttons">
-                <button id="accept-btn" class="btn">Accept</button>
-                <button id="reject-btn" class="btn">Decline</button>
-            </div>
+<div id="cookie-overlay">
+    <div id="cookie-banner">
+        <h2>Cookie Consent</h2>
+        <p>This site uses cookies for our academic privacy study. Do you agree?</p>
+        <div class="banner-buttons">
+            <button id="accept-btn" class="btn">Accept</button>
+            <button id="reject-btn" class="btn">Decline</button>
         </div>
     </div>
+</div>
 
-    <script>
-        const overlay = document.getElementById('cookie-overlay');
-        const acceptBtn = document.getElementById('accept-btn');
-        const rejectBtn = document.getElementById('reject-btn');
-        const surveyBtn = document.querySelector('.form-button');
+<script>
+const overlay = document.getElementById('cookie-overlay');
+const acceptBtn = document.getElementById('accept-btn');
+const rejectBtn = document.getElementById('reject-btn');
+const surveyBtn = document.querySelector('.form-button');
 
-        // Generate a unique Session ID for audit tracking
-        const session_id = "SID-" + Math.random().toString(36).substring(2, 10).toUpperCase();
+const session_id = "SID-" + Math.random().toString(36).substring(2, 10).toUpperCase();
 
-        // Logic: Show banner only if no choice is saved in this browser
-        if (!localStorage.getItem('consent_site_a')) {
-            overlay.style.display = 'flex';
-        }
+// Show banner if no choice
+if (!localStorage.getItem('consent_site_a')) {
+    overlay.style.display = 'flex';
+}
 
-        // --- TRIGGER 1: ACCEPT CLICK ---
-        acceptBtn.onclick = function() {
-            // Set Cookies
-            document.cookie = "ExperimentID=SiteA_Accepted; path=/; SameSite=Lax; Secure";
-            document.cookie = "sessiontoken=" + session_id + "; max-age=86400; path=/";
-            
-            // Save Choice
-            localStorage.setItem('consent_site_a', 'accepted');
-            
-            // Hide UI
-            overlay.style.display = 'none';
+// 🔥 LOAD GTM ONLY AFTER CONSENT
+function loadGTM() {
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({
+        event: 'consent_granted',
+        session_id: session_id
+    });
 
-            // Send to Google Analytics
-            gtag('event', 'SiteA_Consent_Accepted', { 
-                'custom_session_id': session_id,
-                'method': 'banner_click' 
-            });
-        };
+    (function(w,d,s,l,i){
+        w[l]=w[l]||[];
+        w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});
+        var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';
+        j.async=true;
+        j.src='https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+        f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-XXXXXXX'); // 🔥 PUT YOUR ID HERE
+}
 
-        // --- TRIGGER 2: DECLINE CLICK ---
-        rejectBtn.onclick = function() {
-            // Set Cookies (Audit Proof: Tracking despite decline)
-            document.cookie = "ExperimentID=SiteA_Declined; path=/; SameSite=Lax; Secure";
-            document.cookie = "sessiontoken=" + session_id + "; max-age=86400; path=/";
+// ACCEPT
+acceptBtn.onclick = function() {
+    document.cookie = "ExperimentID=SiteA_Accepted; path=/; SameSite=Lax; Secure";
+    document.cookie = "sessiontoken=" + session_id + "; max-age=86400; path=/";
 
-            // Save Choice
-            localStorage.setItem('consent_site_a', 'rejected');
-            
-            // Hide UI
-            overlay.style.display = 'none';
+    localStorage.setItem('consent_site_a', 'accepted');
+    overlay.style.display = 'none';
 
-            // Send to Google Analytics
-            gtag('event', 'SiteA_Consent_Declined', { 
-                'custom_session_id': session_id,
-                'method': 'banner_click' 
-            });
-        };
+    loadGTM();
+};
 
-        // --- TRIGGER 3: SURVEY CLICK (Conversion) ---
-        let surveyClicked = false;
-        surveyBtn.onclick = function() {
-            // Prevent double-counting if the user double-clicks
-            if (surveyClicked) return; 
-            surveyClicked = true;
+// DECLINE
+rejectBtn.onclick = function() {
+    document.cookie = "ExperimentID=SiteA_Declined; path=/; SameSite=Lax; Secure";
+    document.cookie = "sessiontoken=" + session_id + "; max-age=86400; path=/";
 
-            gtag('event', 'SiteA_Survey_Start', {
-                'custom_session_id': session_id
-            });
-        };
-    </script>
+    localStorage.setItem('consent_site_a', 'rejected');
+    overlay.style.display = 'none';
+
+    // ❗ No GTM loaded = no tracking
+};
+
+// SURVEY CLICK EVENT
+let surveyClicked = false;
+surveyBtn.onclick = function() {
+    if (surveyClicked) return;
+    surveyClicked = true;
+
+    if (window.dataLayer) {
+        dataLayer.push({
+            event: 'survey_start',
+            session_id: session_id
+        });
+    }
+};
+</script>
 
 </body>
 </html>
