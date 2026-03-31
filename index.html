@@ -24,6 +24,7 @@
       box-shadow: 0 10px 25px rgba(0,0,0,0.1);
       text-align: center;
       max-width: 450px;
+      width: 90%;
     }
 
     h1 {
@@ -41,7 +42,7 @@
       font-weight: bold;
       font-size: 1.1rem;
       box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-      transition: transform 0.2s;
+      transition: transform 0.2s, background-color 0.2s;
       margin-top: 10px;
       border: none;
       cursor: pointer;
@@ -72,7 +73,7 @@
       border-radius: 12px;
       box-shadow: 0 15px 35px rgba(0,0,0,0.4);
       text-align: center;
-      max-width: 400px;
+      max-width: 420px;
       width: 85%;
     }
 
@@ -81,6 +82,7 @@
       gap: 15px;
       justify-content: center;
       margin-top: 25px;
+      flex-wrap: wrap;
     }
 
     .btn {
@@ -90,6 +92,7 @@
       font-weight: bold;
       font-size: 1rem;
       border: none;
+      transition: opacity 0.2s;
     }
 
     #accept-btn {
@@ -176,11 +179,13 @@
       }
     }
 
-    function pushSessionReadyEvent() {
+    function pushDataLayerEvent(eventName, consentChoice) {
       window.dataLayer = window.dataLayer || [];
       window.dataLayer.push({
-        event: 'session_ready',
-        session_id: window.currentSessionID
+        event: eventName,
+        session_id: window.currentSessionID,
+        consent_choice: consentChoice,
+        experiment_id: 'SiteA'
       });
     }
 
@@ -189,27 +194,19 @@
       gtmLoaded = true;
 
       window.dataLayer = window.dataLayer || [];
-
-      window.dataLayer.push({
-        event: 'consent_granted',
-        session_id: window.currentSessionID,
-        consent_choice: 'accepted',
-        experiment_id: 'SiteA'
-      });
-
       (function(w,d,s,l,i){
         w[l]=w[l]||[];
         w[l].push({
           'gtm.start': new Date().getTime(),
-          event:'gtm.js'
+          event: 'gtm.js'
         });
         var f=d.getElementsByTagName(s)[0],
             j=d.createElement(s),
-            dl=l!='dataLayer' ? '&l=' + l : '';
-        j.async=true;
-        j.src='https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+            dl=l !== 'dataLayer' ? '&l=' + l : '';
+        j.async = true;
+        j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
         f.parentNode.insertBefore(j,f);
-      })(window,document,'script','dataLayer','GTM-KQ9WM97V');
+      })(window, document, 'script', 'dataLayer', 'GTM-KQ9WM97V');
     }
 
     initSessionID();
@@ -219,8 +216,11 @@
     if (!savedConsent) {
       overlay.style.display = 'flex';
     } else if (savedConsent === 'accepted') {
-      pushSessionReadyEvent();
+      overlay.style.display = 'none';
       loadGTM();
+      pushDataLayerEvent('session_ready', 'accepted');
+    } else {
+      overlay.style.display = 'none';
     }
 
     acceptBtn.onclick = function() {
@@ -230,8 +230,10 @@
       localStorage.setItem('consent_site_a', 'accepted');
       overlay.style.display = 'none';
 
-      pushSessionReadyEvent();
       loadGTM();
+
+      pushDataLayerEvent('session_ready', 'accepted');
+      pushDataLayerEvent('consent_accept', 'accepted');
     };
 
     rejectBtn.onclick = function() {
@@ -241,29 +243,26 @@
       localStorage.setItem('consent_site_a', 'rejected');
       overlay.style.display = 'none';
 
-      window.dataLayer = window.dataLayer || [];
-      window.dataLayer.push({
-        event: 'consent_declined',
-        session_id: window.currentSessionID,
-        consent_choice: 'rejected',
-        experiment_id: 'SiteA'
-      });
-
-      // No GTM load here
+      // This is stored locally and pushed to dataLayer,
+      // but GA will not receive it because GTM is not loaded on reject.
+      pushDataLayerEvent('consent_reject', 'rejected');
     };
 
     surveyBtn.addEventListener('click', function() {
       if (surveyClicked) return;
       surveyClicked = true;
 
+      const consentChoice = localStorage.getItem('consent_site_a') || 'none';
+
       window.dataLayer = window.dataLayer || [];
       window.dataLayer.push({
         event: 'survey_start',
         session_id: window.currentSessionID,
-        consent_choice: localStorage.getItem('consent_site_a') || 'none',
+        consent_choice: consentChoice,
         experiment_id: 'SiteA'
       });
     });
   </script>
+
 </body>
 </html>
