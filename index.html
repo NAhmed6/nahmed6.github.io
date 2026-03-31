@@ -1,186 +1,269 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Networking Research Study - Site A</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Networking Research Study - Site A</title>
 
-    <style>
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background-color: #f4f4f9; 
-            display: flex; 
-            flex-direction: column;
-            align-items: center; 
-            justify-content: center; 
-            height: 100vh; 
-            margin: 0; 
-        }
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f4f9;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
 
-        .card { 
-            background: white; 
-            padding: 2.5rem; 
-            border-radius: 12px; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1); 
-            text-align: center; 
-            max-width: 450px; 
-        }
+    .card {
+      background: white;
+      padding: 2.5rem;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      text-align: center;
+      max-width: 450px;
+    }
 
-        h1 { color: #252e39; margin-bottom: 20px; }
+    h1 {
+      color: #252e39;
+      margin-bottom: 20px;
+    }
 
-        .form-button { 
-            display: inline-block;
-            background-color: #8e44ad; 
-            color: white; 
-            padding: 15px 30px; 
-            text-decoration: none; 
-            border-radius: 8px; 
-            font-weight: bold; 
-            font-size: 1.1rem; 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
-            transition: transform 0.2s; 
-            margin-top: 10px;
-        }
+    .form-button {
+      display: inline-block;
+      background-color: #8e44ad;
+      color: white;
+      padding: 15px 30px;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 1.1rem;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      transition: transform 0.2s;
+      margin-top: 10px;
+      border: none;
+      cursor: pointer;
+    }
 
-        .form-button:hover { transform: scale(1.05); background-color: #732d91; }
+    .form-button:hover {
+      transform: scale(1.05);
+      background-color: #732d91;
+    }
 
-        #cookie-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.85);
-            display: none; 
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-        }
+    #cookie-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
 
-        #cookie-banner { 
-            background: #252e39; 
-            color: white; 
-            padding: 30px; 
-            border-radius: 12px; 
-            box-shadow: 0 15px 35px rgba(0,0,0,0.4); 
-            text-align: center; 
-            max-width: 400px;
-            width: 85%;
-        }
+    #cookie-banner {
+      background: #252e39;
+      color: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+      text-align: center;
+      max-width: 400px;
+      width: 85%;
+    }
 
-        .banner-buttons {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            margin-top: 25px;
-        }
+    .banner-buttons {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      margin-top: 25px;
+    }
 
-        .btn {
-            padding: 12px 30px; 
-            border-radius: 6px; 
-            cursor: pointer; 
-            font-weight: bold; 
-            font-size: 1rem;
-            border: none;
-        }
+    .btn {
+      padding: 12px 30px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 1rem;
+      border: none;
+    }
 
-        #accept-btn { background: #8e44ad; color: white; }
-        #reject-btn { background: #5a6268; color: white; }
+    #accept-btn {
+      background: #8e44ad;
+      color: white;
+    }
 
-        .btn:hover { opacity: 0.9; }
-    </style>
+    #reject-btn {
+      background: #5a6268;
+      color: white;
+    }
+
+    .btn:hover {
+      opacity: 0.9;
+    }
+  </style>
 </head>
-
 <body>
 
-<div class="card">
+  <div class="card">
     <h1>Networking Project - Site A</h1>
     <p>Thank you for participating in our academic study on web privacy.</p>
-    
-    <a href="https://forms.gle/12mcW67qt93uttvQ9" class="form-button">
-        Start Experiment & Survey
+
+    <a
+      href="https://forms.gle/12mcW67qt93uttvQ9"
+      class="form-button"
+      id="survey-btn"
+    >
+      Start Experiment &amp; Survey
     </a>
-</div>
+  </div>
 
-<div id="cookie-overlay">
+  <div id="cookie-overlay">
     <div id="cookie-banner">
-        <h2>Cookie Consent</h2>
-        <p>This site uses cookies for our academic privacy study. Do you agree?</p>
-        <div class="banner-buttons">
-            <button id="accept-btn" class="btn">Accept</button>
-            <button id="reject-btn" class="btn">Decline</button>
-        </div>
+      <h2>Cookie Consent</h2>
+      <p>
+        This site uses cookies for our academic privacy study. Do you agree to
+        the storage of cookies on your device?
+      </p>
+      <div class="banner-buttons">
+        <button id="accept-btn" class="btn">Accept</button>
+        <button id="reject-btn" class="btn">Decline</button>
+      </div>
     </div>
-</div>
+  </div>
 
-<script>
-const overlay = document.getElementById('cookie-overlay');
-const acceptBtn = document.getElementById('accept-btn');
-const rejectBtn = document.getElementById('reject-btn');
-const surveyBtn = document.querySelector('.form-button');
+  <script>
+    const overlay = document.getElementById('cookie-overlay');
+    const acceptBtn = document.getElementById('accept-btn');
+    const rejectBtn = document.getElementById('reject-btn');
+    const surveyBtn = document.getElementById('survey-btn');
 
-const session_id = "SID-" + Math.random().toString(36).substring(2, 10).toUpperCase();
+    let surveyClicked = false;
+    let gtmLoaded = false;
 
-// Show banner if no choice
-if (!localStorage.getItem('consent_site_a')) {
-    overlay.style.display = 'flex';
-}
+    function generateSessionID() {
+      return 'ID-' + Math.random().toString(36).slice(2, 11);
+    }
 
-// 🔥 LOAD GTM ONLY AFTER CONSENT
-function loadGTM() {
-    window.dataLayer = window.dataLayer || [];
-    window.dataLayer.push({
+    function getCookieValue(name) {
+      const match = document.cookie
+        .split('; ')
+        .find(row => row.startsWith(name + '='));
+      return match ? decodeURIComponent(match.split('=')[1]) : null;
+    }
+
+    function setCookie(name, value, maxAgeSeconds = null) {
+      let cookie = `${name}=${encodeURIComponent(value)}; path=/; SameSite=Lax; Secure`;
+      if (maxAgeSeconds) {
+        cookie += `; max-age=${maxAgeSeconds}`;
+      }
+      document.cookie = cookie;
+    }
+
+    function initSessionID() {
+      let existingSession = getCookieValue('SessionToken');
+
+      if (!existingSession) {
+        const newID = generateSessionID();
+        setCookie('SessionToken', newID, 86400);
+        window.currentSessionID = newID;
+      } else {
+        window.currentSessionID = existingSession;
+      }
+    }
+
+    function pushSessionReadyEvent() {
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({
+        event: 'session_ready',
+        session_id: window.currentSessionID
+      });
+    }
+
+    function loadGTM() {
+      if (gtmLoaded) return;
+      gtmLoaded = true;
+
+      window.dataLayer = window.dataLayer || [];
+
+      window.dataLayer.push({
         event: 'consent_granted',
-        session_id: session_id
-    });
+        session_id: window.currentSessionID,
+        consent_choice: 'accepted',
+        experiment_id: 'SiteA'
+      });
 
-    (function(w,d,s,l,i){
+      (function(w,d,s,l,i){
         w[l]=w[l]||[];
-        w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});
+        w[l].push({
+          'gtm.start': new Date().getTime(),
+          event:'gtm.js'
+        });
         var f=d.getElementsByTagName(s)[0],
-        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';
+            j=d.createElement(s),
+            dl=l!='dataLayer' ? '&l=' + l : '';
         j.async=true;
         j.src='https://www.googletagmanager.com/gtm.js?id=' + i + dl;
         f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-KQ9WM97V'); // 🔥 PUT YOUR ID HERE
-}
-
-// ACCEPT
-acceptBtn.onclick = function() {
-    document.cookie = "ExperimentID=SiteA_Accepted; path=/; SameSite=Lax; Secure";
-    document.cookie = "sessiontoken=" + session_id + "; max-age=86400; path=/";
-
-    localStorage.setItem('consent_site_a', 'accepted');
-    overlay.style.display = 'none';
-
-    loadGTM();
-};
-
-// DECLINE
-rejectBtn.onclick = function() {
-    document.cookie = "ExperimentID=SiteA_Declined; path=/; SameSite=Lax; Secure";
-    document.cookie = "sessiontoken=" + session_id + "; max-age=86400; path=/";
-
-    localStorage.setItem('consent_site_a', 'rejected');
-    overlay.style.display = 'none';
-
-    // ❗ No GTM loaded = no tracking
-};
-
-// SURVEY CLICK EVENT
-let surveyClicked = false;
-surveyBtn.onclick = function() {
-    if (surveyClicked) return;
-    surveyClicked = true;
-
-    if (window.dataLayer) {
-        dataLayer.push({
-            event: 'survey_start',
-            session_id: session_id
-        });
+      })(window,document,'script','dataLayer','GTM-KQ9WM97V');
     }
-};
-</script>
 
+    initSessionID();
+
+    const savedConsent = localStorage.getItem('consent_site_a');
+
+    if (!savedConsent) {
+      overlay.style.display = 'flex';
+    } else if (savedConsent === 'accepted') {
+      pushSessionReadyEvent();
+      loadGTM();
+    }
+
+    acceptBtn.onclick = function() {
+      setCookie('ExperimentID', 'SiteA_Accepted', 86400);
+      setCookie('SessionToken', window.currentSessionID, 86400);
+
+      localStorage.setItem('consent_site_a', 'accepted');
+      overlay.style.display = 'none';
+
+      pushSessionReadyEvent();
+      loadGTM();
+    };
+
+    rejectBtn.onclick = function() {
+      setCookie('ExperimentID', 'SiteA_Declined', 86400);
+      setCookie('SessionToken', window.currentSessionID, 86400);
+
+      localStorage.setItem('consent_site_a', 'rejected');
+      overlay.style.display = 'none';
+
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({
+        event: 'consent_declined',
+        session_id: window.currentSessionID,
+        consent_choice: 'rejected',
+        experiment_id: 'SiteA'
+      });
+
+      // No GTM load here
+    };
+
+    surveyBtn.addEventListener('click', function() {
+      if (surveyClicked) return;
+      surveyClicked = true;
+
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({
+        event: 'survey_start',
+        session_id: window.currentSessionID,
+        consent_choice: localStorage.getItem('consent_site_a') || 'none',
+        experiment_id: 'SiteA'
+      });
+    });
+  </script>
 </body>
 </html>
