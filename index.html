@@ -168,7 +168,7 @@
     }
 
     function initSessionID() {
-      let existingSession = getCookieValue('SessionToken');
+      const existingSession = getCookieValue('SessionToken');
 
       if (!existingSession) {
         const newID = generateSessionID();
@@ -183,7 +183,7 @@
       window.dataLayer = window.dataLayer || [];
       window.dataLayer.push({
         event: eventName,
-        session_id: window.currentSessionID,
+        session_id: window.currentSessionID || null,
         consent_choice: consentChoice,
         experiment_id: 'SiteA'
       });
@@ -200,22 +200,21 @@
           'gtm.start': new Date().getTime(),
           event: 'gtm.js'
         });
-        var f=d.getElementsByTagName(s)[0],
-            j=d.createElement(s),
-            dl=l !== 'dataLayer' ? '&l=' + l : '';
+        var f = d.getElementsByTagName(s)[0],
+            j = d.createElement(s),
+            dl = l !== 'dataLayer' ? '&l=' + l : '';
         j.async = true;
         j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
-        f.parentNode.insertBefore(j,f);
+        f.parentNode.insertBefore(j, f);
       })(window, document, 'script', 'dataLayer', 'GTM-KQ9WM97V');
     }
-
-    initSessionID();
 
     const savedConsent = localStorage.getItem('consent_site_a');
 
     if (!savedConsent) {
       overlay.style.display = 'flex';
     } else if (savedConsent === 'accepted') {
+      initSessionID();
       overlay.style.display = 'none';
       loadGTM();
       pushDataLayerEvent('session_ready', 'accepted');
@@ -224,27 +223,27 @@
     }
 
     acceptBtn.onclick = function() {
-      setCookie('ExperimentID', 'SiteA_Accepted', 86400);
-      setCookie('SessionToken', window.currentSessionID, 86400);
+      if (!window.currentSessionID) {
+        initSessionID();
+      }
 
+      setCookie('ExperimentID', 'SiteA_Accepted', 86400);
       localStorage.setItem('consent_site_a', 'accepted');
       overlay.style.display = 'none';
 
       loadGTM();
-
       pushDataLayerEvent('session_ready', 'accepted');
       pushDataLayerEvent('consent_accept', 'accepted');
     };
 
     rejectBtn.onclick = function() {
       setCookie('ExperimentID', 'SiteA_Declined', 86400);
-      setCookie('SessionToken', window.currentSessionID, 86400);
-
       localStorage.setItem('consent_site_a', 'rejected');
       overlay.style.display = 'none';
 
-      // This is stored locally and pushed to dataLayer,
-      // but GA will not receive it because GTM is not loaded on reject.
+      // No SessionToken cookie on reject
+      // No GTM load on reject
+      // This stays local only and is not sent to GA
       pushDataLayerEvent('consent_reject', 'rejected');
     };
 
@@ -257,7 +256,7 @@
       window.dataLayer = window.dataLayer || [];
       window.dataLayer.push({
         event: 'survey_start',
-        session_id: window.currentSessionID,
+        session_id: window.currentSessionID || null,
         consent_choice: consentChoice,
         experiment_id: 'SiteA'
       });
